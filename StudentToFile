@@ -1,0 +1,86 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct student{
+    char name[50];
+    int age;
+    float gpa;
+};
+void file(struct student *nm,int inp){
+    FILE *f = fopen("C:/Users/NACK/Desktop/New Text Document.txt","w");//เเก้ไขไฟล์
+    if (f==NULL){
+        printf("Fail");
+        return 1;
+    }
+    else {
+        printf("Good");
+    }
+    for (int i = 0 ; i < inp ; i ++){
+        fprintf(f,"%s %d %0.2f\n",nm[i].name,nm[i].age,nm[i].gpa);
+    }
+    fclose(f);
+    f = fopen("C:/Users/NACK/Desktop/New Text Document.txt","r");//อ่านไฟล์
+    char name[50];
+    int age;
+    float gpa;
+    printf("\nข้อมูลที่อ่านจากไฟล์:\n");
+    while (fscanf(f, "%49s %d %f", name, &age, &gpa) != EOF) {
+        printf("ชื่อ: %s, อายุ: %d, GPA: %.2f\n", name, age, gpa);
+    }
+    fclose(f);
+    free(nm);
+}
+void sortStudents(struct student *nm,int inp) {
+    for (int i = 0 ; i < inp ; i ++){
+        for (int j = i + 1 ; j < inp ; j ++){
+            if (nm[i].gpa > nm[j].gpa){
+                struct student temp  = nm[i];
+                nm[i] = nm[j];
+                nm[j] = temp;
+            }
+        }
+    }
+    file(nm,inp);
+}
+void find(struct student *nm,int inp){
+    char findname [50];
+    printf("\nFind name:");
+    scanf("%s",findname);
+    for (int i = 0 ; i < inp ; i ++){
+        if (strcmp(nm[i].name , findname)==0){
+            printf("\nFind");
+        }
+        else {
+            printf("Valid");
+        }
+    }
+}
+void displayStudents (struct student *nm,int inp){
+    for (int i = 0 ; i < inp ; i ++){
+        printf("\n[%d]Name:%s\nAge:%d\nGpa:%0.2f",i+1,nm[i].name,nm[i].age,nm[i].gpa);
+    }
+}
+int inputStudent(struct student *nm,int inp){
+    for (int i = 0 ; i < inp ; i++){
+        getchar();//เคลียบรัฟ
+        printf("Name:");
+        fgets(nm[i].name,sizeof(nm[i].name),stdin);
+        nm[i].name[strcspn(nm[i].name, "\n")] = 0 ;
+        printf("Age:");
+        scanf("%d",&nm[i].age);
+        printf("GPA:");
+        scanf("%f",&nm[i].gpa);
+    }
+    getchar();
+    displayStudents(nm,inp);
+    find(nm,inp);
+    sortStudents(nm,inp);
+}
+int main(){
+    int inp;
+    printf("จำนวน");
+    scanf("%d",&inp);//จำนวนนศ
+    struct student *nm = (struct student*)malloc(inp*sizeof(struct student));// ทำการจองข้อมูลในmemory
+    inputStudent(nm,inp);//ส่งไปยังfunc
+}
